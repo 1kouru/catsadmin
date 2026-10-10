@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex, nofollow">
+<title>Анкеты котят</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a; --card:#141414; --card2:#1c1c1c; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --ink:#fff; --muted:rgba(255,255,255,.5); --soft:rgba(255,255,255,.75);
+  --ease:cubic-bezier(.22,1,.36,1); --pad:max(16px, env(safe-area-inset-left));
+  --st:env(safe-area-inset-top); --sb:env(safe-area-inset-bottom);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:'Onest',system-ui,-apple-system,sans-serif;font-size:15.5px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:inherit}
+[hidden]{display:none!important}
+::selection{background:#fff;color:#000}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;white-space:nowrap;transition:transform .3s var(--ease),background .25s,color .25s,box-shadow .25s}
+.btn:active{transform:scale(.96)}
+.btn-w{background:#fff;color:#000}
+.btn-g{background:var(--card2)}
+.btn-o{box-shadow:inset 0 0 0 1px var(--line2)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+@media (hover:hover){.btn-w:hover{background:#e8e8e8}.btn-g:hover,.btn-o:hover{background:#262626}}
+.icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--card2);transition:transform .3s var(--ease),background .25s;flex:none}
+.icon:active{transform:scale(.9)}
+.icon.glass{background:rgba(0,0,0,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+@media (hover:hover){.icon:hover{background:#2a2a2a}}
+.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.inp{width:100%;font:inherit;font-size:16px;font-weight:500;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 15px;outline:none;transition:border-color .25s,background .25s;-webkit-appearance:none;appearance:none}
+.inp:focus{border-color:rgba(255,255,255,.6);background:var(--card2)}
+.inp::placeholder{color:rgba(255,255,255,.35)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:16px}
+.label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ===== вход ===== */
+.login{min-height:100svh;display:grid;place-items:center;padding:24px var(--pad)}
+.login form{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;animation:up .6s var(--ease) both}
+.login .logo{justify-content:center;margin-bottom:6px}
+.login h1{font-size:30px;font-weight:600;letter-spacing:-.04em;text-align:center;margin-bottom:18px}
+.login .btn{height:54px;margin-top:6px}
+.login .msg{font-size:14px;color:var(--soft);text-align:center;min-height:20px}
+
+/* ===== каркас ===== */
+.top{position:sticky;top:0;z-index:20;padding:calc(var(--st) + 10px) var(--pad) 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(10,10,10,.82);backdrop-filter:saturate(1.5) blur(18px);-webkit-backdrop-filter:saturate(1.5) blur(18px);border-bottom:1px solid var(--line)}
+.top-r{display:flex;gap:8px}
+@media (min-width:1000px){
+  .top{height:64px;padding-top:0;padding-bottom:0}
+  .layout{display:grid;grid-template-columns:300px 420px 1fr;height:calc(100vh - 64px)}
+  .side,.list-pane,.detail{overflow-y:auto;overscroll-behavior:contain}
+  .side,.list-pane{border-right:1px solid var(--line)}
+}
+@media (min-width:1400px){.layout{grid-template-columns:340px 460px 1fr}}
+
+/* ===== котята (главный экран / левая колонка) ===== */
+.side{padding:20px var(--pad) calc(40px + var(--sb))}
+.side-head{margin-bottom:18px}
+.side-head h1{font-size:34px;font-weight:600;letter-spacing:-.045em;line-height:1}
+.side-head p{color:var(--muted);margin-top:6px;font-size:15px}
+.side-head p b{color:var(--ink);font-weight:600}
+@media (min-width:1000px){.side{padding:18px 16px 30px}.side-head{display:none}}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (min-width:640px) and (max-width:999px){.kgrid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1000px){.kgrid{grid-template-columns:1fr;gap:10px}}
+.kcard{position:relative;display:block;width:100%;border-radius:24px;overflow:hidden;aspect-ratio:1;background:var(--card);transition:transform .35s var(--ease),box-shadow .3s;animation:up .5s var(--ease) both;isolation:isolate}
+.kcard:active{transform:scale(.97)}
+@media (min-width:1000px){.kcard{aspect-ratio:16/11}}
+.kcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+@media (hover:hover){.kcard:hover img{transform:scale(1.04)}}
+.kcard::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,0) 55%);z-index:1}
+.kc-b{position:absolute;left:14px;right:14px;bottom:13px;z-index:2}
+.kc-b b{display:block;font-size:24px;font-weight:600;letter-spacing:-.04em;line-height:1.05}
+.kc-b span{font-size:13px;color:rgba(255,255,255,.8)}
+.kc-new{position:absolute;top:10px;right:10px;z-index:2;background:#fff;color:#000;border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}
+.kcard.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px #fff}
+.kcard.txt{aspect-ratio:auto;padding:18px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.kcard.txt::after{display:none}
+.kcard.txt .kc-b{position:static}
+.kcard.txt .kc-new{top:16px;right:16px}
+.kcard.all{grid-column:1/-1;min-height:118px}
+.kcard.all .big{font-size:44px;font-weight:600;letter-spacing:-.05em;line-height:1}
+@media (min-width:1000px){.kcard.all{min-height:104px}}
+/* коллаж из всех пятерых — для «Любой» */
+.collage{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+.collage img{position:static;flex:1 1 0;min-width:0;width:auto;height:100%;object-fit:cover;border-radius:0;transition:flex-grow .6s var(--ease),filter .4s;animation:strip .9s var(--ease) both}
+.collage img:nth-child(2){animation-delay:.06s}
+.collage img:nth-child(3){animation-delay:.12s}
+.collage img:nth-child(4){animation-delay:.18s}
+.collage img:nth-child(5){animation-delay:.24s}
+@keyframes strip{from{transform:translateY(18%) scale(1.15);opacity:0}}
+@media (hover:hover){
+  .kcard:hover .collage img,.hero:hover .collage img{transform:none;filter:brightness(.65)}
+  .collage img:hover,.kcard:hover .collage img:hover,.hero:hover .collage img:hover{flex-grow:2.6;filter:none}
+}
+.kcard.anyk{outline:1.5px solid rgba(255,255,255,.4);outline-offset:-1.5px}
+.kcard.anyk.on{outline:none}
+.kc-tag{position:absolute;top:10px;left:10px;z-index:2;background:#fff;color:#000;border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}
+.any.mini{position:relative;overflow:hidden;padding:0}
+.any.mini .collage img{flex:1 1 0;width:auto;height:100%;border-radius:0;animation:none}
+
+/* ===== список анкет ===== */
+@media (max-width:999px){
+  .list-pane{position:fixed;inset:0;z-index:30;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);visibility:hidden;transition:transform .45s var(--ease),visibility 0s .45s}
+  .list-pane.open{transform:none;visibility:visible;transition:transform .45s var(--ease),visibility 0s}
+}
+.hero{position:relative;overflow:hidden}
+.hero.pic{height:min(100vw,60vh);cursor:zoom-in}
+@media (min-width:640px) and (max-width:999px){.hero.pic{height:min(62.5vw,60vh)}}
+@media (min-width:1000px){.hero.pic{height:auto;aspect-ratio:16/10}}
+.hero.pic img{width:100%;height:100%;object-fit:cover}
+.hero.pic::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,1),rgba(10,10,10,0) 45%);pointer-events:none}
+.hero-t{position:absolute;left:var(--pad);right:var(--pad);bottom:16px;z-index:2}
+.hero h2{font-size:36px;font-weight:600;letter-spacing:-.045em;line-height:1}
+.hero p{color:var(--soft);font-size:15px;margin-top:6px}
+.hero.text{padding:calc(var(--st) + 70px) var(--pad) 12px}
+@media (min-width:1000px){.hero.text{padding:26px 20px 10px}}
+.hero.text .hero-t{position:static}
+.hero-back{position:absolute;top:calc(var(--st) + 12px);left:var(--pad);z-index:3}
+@media (min-width:1000px){.hero-back{display:none}}
+.lp-tools{position:sticky;top:0;z-index:4;background:var(--bg);padding:12px var(--pad) 10px;display:flex;flex-direction:column;gap:10px}
+@media (max-width:999px){.lp-tools{padding-top:calc(12px)}}
+@media (min-width:1000px){.lp-tools{padding:12px 20px 10px}}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--card);border-radius:14px;padding:4px}
+.tab{height:38px;border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:4px;transition:background .25s,color .25s;text-align:center}
+.tab b{font-weight:600;font-size:11.5px;opacity:.7}
+.tab.on{background:#fff;color:#000}
+.list{padding:2px var(--pad) calc(40px + var(--sb));display:flex;flex-direction:column;gap:6px}
+@media (min-width:1000px){.list{padding:2px 20px 30px}}
+.item{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border-radius:18px;background:var(--card);border:1px solid transparent;transition:background .2s,border-color .2s,transform .3s var(--ease);animation:up .4s var(--ease) both}
+.item:active{transform:scale(.985)}
+@media (hover:hover){.item:hover{background:#191919}}
+.item.active{border-color:rgba(255,255,255,.6)}
+.av{position:relative;width:52px;height:52px;flex:none}
+.av img,.av .any{width:100%;height:100%;border-radius:15px;object-fit:cover}
+.av .any{display:grid;place-items:center;background:var(--card2);font-size:11px;font-weight:700;color:var(--soft)}
+.av .dot{position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px var(--card)}
+.item-main{flex:1;min-width:0}
+.item-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.item-top b{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item.new .item-top b{font-weight:700}
+.item time{font-size:12.5px;color:var(--muted);flex:none}
+.item-sub{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;display:flex;gap:6px;align-items:center}
+.pill{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:99px;font-size:11.5px;font-weight:700;flex:none}
+.pill.fav{background:#fff;color:#000}
+.pill.spam,.pill.flag{box-shadow:inset 0 0 0 1px var(--line2);color:var(--soft)}
+.empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:15px}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+
+/* ===== анкета ===== */
+@media (max-width:999px){
+  .detail{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);visibility:hidden;transition:transform .45s var(--ease),visibility 0s .45s}
+  .detail.open{transform:none;visibility:visible;transition:transform .45s var(--ease),visibility 0s}
+}
+.d-top{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(var(--st) + 9px) var(--pad) 9px;background:rgba(10,10,10,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+@media (min-width:1000px){.d-top{padding:11px 28px}}
+.d-status{font-size:13px;font-weight:600;color:var(--muted);text-align:center;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-nav{display:flex;gap:6px}
+.d-nav .icon{width:40px;height:40px}
+.icon[disabled]{opacity:.3;pointer-events:none}
+@media (min-width:1000px){.d-back{display:none}.d-status{text-align:left}}
+.d-body{max-width:760px;margin:0 auto;padding:22px var(--pad) 120px}
+@media (min-width:1000px){.d-body{padding:28px 28px 40px}}
+.d-head h2{font-size:30px;font-weight:600;letter-spacing:-.04em;line-height:1.1}
+.d-head p{color:var(--muted);font-size:14.5px;margin-top:5px}
+.want{display:flex;align-items:center;gap:14px;width:100%;margin:18px 0;padding:10px;border-radius:20px;background:var(--card);border:1px solid var(--line);transition:background .25s}
+@media (hover:hover){.want:hover{background:#191919}}
+.want img,.want .any{width:84px;height:84px;border-radius:15px;object-fit:cover;flex:none}
+.want .any{display:grid;place-items:center;background:var(--card2);font-weight:700;font-size:13px}
+.want span{display:block;font-size:12.5px;color:var(--muted)}
+.want b{font-size:17px;font-weight:600;line-height:1.25}
+.contacts{display:grid;gap:8px;margin-bottom:8px}
+@media (min-width:1400px){.contacts{grid-template-columns:1fr 1fr}}
+.contact{padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line);min-width:0;display:flex;flex-direction:column;gap:12px}
+.contact span{font-size:12.5px;color:var(--muted);display:block}
+.contact b{font-weight:600;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.contact .acts{display:flex;gap:6px}
+.contact .btn{height:44px;padding:0 12px;font-size:14px;flex:1}
+.sec-t{margin:28px 0 10px}
+.qa{border-top:1px solid var(--line)}
+@media (min-width:1300px){.qa{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}.qa .wide{grid-column:1/-1}}
+.qa div{padding:13px 0;border-bottom:1px solid var(--line)}
+.qa dt{font-size:13px;color:var(--muted);margin-bottom:3px}
+.qa dd{font-size:16px;white-space:pre-wrap;word-break:break-word}
+.qa .warn dd::after{content:"внимание";display:inline-block;margin-left:8px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--line2);vertical-align:2px}
+.photo{border-radius:20px;overflow:hidden;background:var(--card);cursor:zoom-in;aspect-ratio:4/3;display:grid;place-items:center;color:var(--muted);font-size:14px;max-width:560px}
+.photo img{width:100%;height:100%;object-fit:cover}
+.note{min-height:96px;resize:vertical;line-height:1.45}
+.saved{font-size:12.5px;color:var(--muted);margin-top:6px;min-height:18px}
+.d-more{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.d-more .btn{height:44px;font-size:14px}
+.d-actions{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;gap:8px;padding:14px var(--pad) calc(12px + var(--sb));background:linear-gradient(to top,var(--bg) 62%,rgba(10,10,10,0))}
+.d-actions .btn{flex:1;height:54px}
+@media (min-width:1000px){.d-actions{position:sticky;padding:14px 28px 18px;max-width:760px;margin:0 auto}}
+.placeholder{height:100%;min-height:60vh;display:grid;place-items:center;color:var(--muted);text-align:center;padding:40px}
+.placeholder svg{margin:0 auto 14px;opacity:.4}
+.kbd{display:none;margin-top:10px;font-size:12.5px}
+@media (hover:hover) and (min-width:1000px){.kbd{display:block}}
+
+.lb{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.95);display:grid;place-items:center;padding:var(--pad);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s;cursor:zoom-out}
+.lb.show{opacity:1;visibility:visible;transition:opacity .3s}
+.lb img{max-width:min(100%,1000px);max-height:100%;border-radius:20px;transform:scale(.95);transition:transform .45s var(--ease)}
+.lb.show img{transform:none}
+.toast{position:fixed;left:50%;top:calc(var(--st) + 12px);z-index:95;transform:translate(-50%,-180%);background:#fff;color:#000;border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;transition:transform .45s var(--ease);width:max-content;max-width:calc(100% - 32px);text-align:center}
+.toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="cat" viewBox="0 0 32 32"><path d="M5 3l7.5 6.6a11.5 11.5 0 0 1 7 0L27 3v15a11 11 0 0 1-22 0z" fill="#fff"/><circle cx="12" cy="17" r="1.8" fill="#0a0a0a"/><circle cx="20" cy="17" r="1.8" fill="#0a0a0a"/></symbol>
+  <symbol id="back" viewBox="0 0 18 18"><path d="M11 3L5 9l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<!-- вход -->
+<div class="login" id="login" hidden>
+  <form id="loginForm" autocomplete="on">
+    <div class="logo"><svg width="22" height="22"><use href="#cat"/></svg>5 котят</div>
+    <h1>Анкеты</h1>
+    <input type="text" name="username" value="admin@kotiki.app" autocomplete="username" hidden>
+    <input class="inp" type="password" id="pass" placeholder="Код доступа" autocomplete="current-password" autocapitalize="off" autofocus required>
+    <button class="btn btn-w" id="loginBtn">Войти</button>
+    <p class="msg" id="loginMsg"></p>
+  </form>
+</div>
+
+<!-- приложение -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="logo"><svg width="20" height="20"><use href="#cat"/></svg>Анкеты</div>
+    <div class="top-r">
+      <button class="icon" id="refresh" aria-label="Обновить"><svg width="17" height="17" viewBox="0 0 18 18"><path d="M15 9a6 6 0 1 1-1.8-4.3M15 3v3.5h-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="icon" id="logout" aria-label="Выйти"><svg width="17" height="17" viewBox="0 0 18 18"><path d="M7 3H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M12 12.5L15.5 9 12 5.5M15.5 9H7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="side">
+      <div class="side-head"><h1>Котята</h1><p id="summary"></p></div>
+      <div class="kgrid" id="kgrid"></div>
+    </nav>
+    <div class="list-pane" id="listPane">
+      <div id="hero"></div>
+      <div class="lp-tools">
+        <div class="tabs" id="tabs"></div>
+        <input class="inp" type="search" id="search" placeholder="Поиск: имя, телефон, город…">
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+    <section class="detail" id="detail"></section>
+  </div>
+</div>
+
+<div class="lb" id="lb"><img alt=""></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const DB = window.KITTENS_DB || {};
+const ADMIN_EMAIL = 'admin@kotiki.app';
+const KITTENS = {1:{sex:'f', color:'Коричневый табби'}, 2:{sex:'m', color:'Голубой табби'}, 3:{sex:'m', color:'Голубой'}, 4:{sex:'f', color:'Серо-голубой табби'}, 5:{sex:'f', color:'Тёмный коричневый табби'}};
+const TABS = [['new','Новые'],['all','Все'],['fav','★ Отбор'],['spam','Спам']];
+const STATUS = {new:'Не просмотрена', seen:'Просмотрена', fav:'★ Отобрана', spam:'В спаме'};
+const WARN = {nets:'Не планирую', walk:'Свободный выгул', promise:'Нет', agree:'Ещё обсуждаем'};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const plural = (n, f) => f[(n % 10 === 1 && n % 100 !== 11) ? 0 : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 1 : 2];
+const anketa = n => `${n} ${plural(n, ['анкета','анкеты','анкет'])}`;
+const sexWord = k => KITTENS[k].sex === 'f' ? 'Девочка' : 'Мальчик';
+const isDesk = () => matchMedia('(min-width:1000px)').matches;
+let tt;
+const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); };
+
+let sb = null, apps = [];
+let view = {k: null, id: null};          // k: null (главная) | 'all' | '0' (любой) | '1'..'5'
+let tab = 'all', query = '';
+const urlCache = {};
+const curK = () => view.k ?? 'all';
+
+/* ===== вход ===== */
+function showLogin(msg = '') { $('#app').hidden = true; $('#login').hidden = false; $('#loginMsg').textContent = msg; }
+function showApp() { $('#login').hidden = true; $('#app').hidden = false; apply(true); load(); }
+
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!sb) return;
+  const btn = $('#loginBtn'); btn.disabled = true; btn.textContent = 'Входим…';
+  // код проверяется на стороне Supabase как пароль служебного пользователя — в коде страницы его нет
+  const {error} = await sb.auth.signInWithPassword({email: ADMIN_EMAIL, password: $('#pass').value});
+  btn.disabled = false; btn.textContent = 'Войти';
+  if (error) { $('#pass').value = ''; return showLogin(error.status === 429 ? 'Слишком много попыток — подождите немного' : 'Неверный код'); }
+  $('#pass').value = '';
+  showApp();
+});
+$('#logout').onclick = async () => { await sb.auth.signOut(); apps = []; view = {k: null, id: null}; showLogin(); };
+
+/* ===== данные ===== */
+async function load(silent) {
+  const r = $('#refresh'); r.classList.add('spin');
+  const {data, error} = await sb.from('applications').select('*').order('created_at', {ascending: false});
+  r.classList.remove('spin');
+  if (error) { if (!silent) toast('Не удалось загрузить анкеты'); console.error(error); return; }
+  if (silent && apps.length) {
+    const known = new Set(apps.map(a => a.id));
+    const fresh = data.filter(a => !known.has(a.id)).length;
+    if (fresh) toast(fresh === 1 ? 'Пришла новая анкета' : `Новых анкет: ${fresh}`);
+  }
+  apps = data;
+  renderAll();
+  if (view.id) markSeen(view.id);
+}
+$('#refresh').onclick = () => load();
+setInterval(() => { if (!document.hidden && !$('#app').hidden) load(true); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !$('#app').hidden) load(true); });
+
+async function patch(id, fields) {
+  const a = apps.find(x => x.id === id); if (!a) return;
+  const prev = {...a};
+  Object.assign(a, fields); renderAll();
+  const {error} = await sb.from('applications').update(fields).eq('id', id);
+  if (error) { Object.assign(a, prev); renderAll(); toast('Не сохранилось — попробуйте ещё раз'); console.error(error); }
+}
+function markSeen(id) { const a = apps.find(x => x.id === id); if (a && a.status === 'new') patch(id, {status: 'seen'}); }
+
+/* ===== помощники ===== */
+const kitOf = a => { const k = a.data && a.data.kitten; return k === 0 || k === '0' ? 0 : (+k || null); };
+const avatar = (a, dot) => {
+  const k = kitOf(a);
+  return `<div class="av">${k ? `<img src="kitten-${k}.jpg" alt="">` : k === 0 ? `<div class="any mini">${collage()}</div>` : '<div class="any">—</div>'}${dot ? '<span class="dot"></span>' : ''}</div>`;
+};
+function when(iso) {
+  const d = new Date(iso), now = new Date();
+  const time = d.toLocaleTimeString('ru', {hour: '2-digit', minute: '2-digit'});
+  if (d.toDateString() === now.toDateString()) return 'сегодня, ' + time;
+  const y = new Date(now); y.setDate(now.getDate() - 1);
+  if (d.toDateString() === y.toDateString()) return 'вчера, ' + time;
+  return d.toLocaleDateString('ru', {day: 'numeric', month: 'short'}) + ', ' + time;
+}
+const warns = d => Object.entries(WARN).filter(([k, v]) => d[k] === v).length;
+const ofKit = (k, list = apps) => k === 'all' ? list : list.filter(a => String(kitOf(a)) === k);
+const inTab = (a, t = tab) => t === 'all' ? a.status !== 'spam' : a.status === t;
+function inSearch(a) {
+  if (!query) return true;
+  const d = a.data || {};
+  return [d.name, d.phone, d.tg, d.city, a.note].join(' ').toLowerCase().includes(query);
+}
+
+/* ===== навигация (работает кнопка/жест «назад») ===== */
+function go(k, id = null) {
+  if (k === view.k && id === view.id) return;
+  const kChanged = k !== view.k;
+  view = {k, id};
+  history.pushState(view, '');
+  apply(kChanged);
+}
+function apply(kChanged) {
+  if (kChanged) { tab = 'all'; query = ''; $('#search').value = ''; renderHero(); $('#listPane').scrollTop = 0; }
+  $('#listPane').classList.toggle('open', view.k !== null);
+  renderSide(); renderTabs(); renderList();
+  if (view.id) { renderDetail(view.id); $('#detail').classList.add('open'); markSeen(view.id); }
+  else { $('#detail').classList.remove('open'); if (isDesk()) renderPlaceholder(); }
+}
+addEventListener('popstate', e => {
+  const s = e.state || {};
+  const nk = s.k ?? null;
+  const kChanged = nk !== view.k;
+  view = {k: nk, id: s.id ?? null};
+  apply(kChanged);
+});
+const back = () => history.state && (history.state.k !== null || history.state.id) ? history.back() : go(null);
+
+/* ===== отрисовка ===== */
+function renderAll() {
+  renderSide(); renderTabs(); renderList();
+  if (view.id && !(document.activeElement && document.activeElement.id === 'note')) renderDetail(view.id, true);
+}
+
+function renderSide() {
+  const live = apps.filter(a => a.status !== 'spam');
+  const nNew = apps.filter(a => a.status === 'new').length;
+  $('#summary').innerHTML = nNew ? `<b>${nNew} ${plural(nNew, ['новая','новые','новых'])}</b> · ${anketa(live.length)}` : anketa(live.length);
+  const k = curK(), desk = isDesk();
+  const on = key => desk && k === key ? ' on' : '';
+  const badge = key => { const n = ofKit(key).filter(a => a.status === 'new').length; return n ? `<span class="kc-new">${n} ${plural(n, ['новая','новые','новых'])}</span>` : ''; };
+  const count = key => anketa(ofKit(key, live).length);
+  $('#kgrid').innerHTML =
+    [1, 2, 3, 4, 5].map(n => `<button class="kcard${on(String(n))}" data-k="${n}"><img src="kitten-${n}.jpg" alt="Котёнок №${n}">${badge(String(n))}<div class="kc-b"><b>№ ${n}</b><span>${sexWord(n)} · ${count(String(n))}</span></div></button>`).join('') +
+    `<button class="kcard anyk${on('0')}" data-k="0">${collage()}<span class="kc-tag">все пятеро</span>${badge('0')}<div class="kc-b"><b>Любой</b><span>${count('0')}</span></div></button>` +
+    `<button class="kcard txt all${on('all')}" data-k="all">${badge('all')}<span class="label">Все анкеты</span><div class="kc-b"><div class="big">${live.length}</div></div></button>`;
+}
+const collage = () => `<div class="collage">${[1, 2, 3, 4, 5].map(n => `<img src="kitten-${n}.jpg" alt="">`).join('')}</div>`;
+
+function renderHero() {
+  const k = curK();
+  const backBtn = `<button class="icon glass hero-back" data-back aria-label="Назад"><svg width="18" height="18"><use href="#back"/></svg></button>`;
+  if (k !== 'all' && k !== '0') {
+    $('#hero').innerHTML = `<div class="hero pic" data-zoom="kitten-${k}.jpg"><img src="kitten-${k}.jpg" alt="Котёнок №${k}">${backBtn}
+      <div class="hero-t"><h2>№ ${k} · ${sexWord(k)}</h2><p>${KITTENS[k].color}</p></div></div>`;
+  } else if (k === '0') {
+    $('#hero').innerHTML = `<div class="hero pic">${collage()}${backBtn}
+      <div class="hero-t"><h2>Любой котёнок</h2><p>Людям подойдёт любой из пятерых</p></div></div>`;
+  } else {
+    $('#hero').innerHTML = `<div class="hero text">${backBtn}<div class="hero-t"><h2>Все анкеты</h2><p>Анкеты на всех котят</p></div></div>`;
+  }
+}
+
+function renderTabs() {
+  const base = ofKit(curK());
+  const n = t => base.filter(a => inTab(a, t)).length;
+  $('#tabs').innerHTML = TABS.map(([t, l]) => `<button class="tab${tab === t ? ' on' : ''}" data-tab="${t}">${l}${n(t) ? ` <b>${n(t)}</b>` : ''}</button>`).join('');
+}
+
+function renderList() {
+  const list = ofKit(curK()).filter(a => inTab(a) && inSearch(a));
+  if (!list.length) {
+    const msg = query ? ['Ничего не найдено', 'Попробуйте другой запрос.']
+      : tab === 'new' ? ['Новых анкет нет', 'Все анкеты просмотрены.']
+      : tab === 'fav' ? ['Пока никого не отобрали', 'Нажмите «☆ Отобрать» в анкете.']
+      : tab === 'spam' ? ['Спам пуст', '']
+      : ['Анкет пока нет', 'Новые анкеты появятся здесь автоматически.'];
+    $('#list').innerHTML = `<div class="empty"><b>${msg[0]}</b>${msg[1]}</div>`;
+    return;
+  }
+  $('#list').innerHTML = list.map((a, i) => {
+    const d = a.data || {}, w = warns(d);
+    return `<button class="item${a.status === 'new' ? ' new' : ''}${a.id === view.id ? ' active' : ''}" data-id="${a.id}" style="animation-delay:${Math.min(i, 12) * 25}ms">
+      ${avatar(a, a.status === 'new')}
+      <div class="item-main">
+        <div class="item-top"><b>${esc(d.name || 'Без имени')}${d.age ? `, ${esc(d.age)}` : ''}</b><time>${when(a.created_at)}</time></div>
+        <div class="item-sub">${a.status === 'fav' ? '<span class="pill fav">★</span>' : ''}${a.status === 'spam' ? '<span class="pill spam">спам</span>' : ''}${w ? `<span class="pill flag">! ${w}</span>` : ''}<span>${esc(d.city || '')}</span></div>
+      </div>
+    </button>`;
+  }).join('');
+}
+
+function qa(d) {
+  const row = (q, a, k, wide) => a ? `<div class="${k && WARN[k] === d[k] ? 'warn' : ''}${wide ? ' wide' : ''}"><dt>${q}</dt><dd>${esc(a)}</dd></div>` : '';
+  const join = (...xs) => xs.filter(Boolean).join(' — ');
+  return [
+    row('Город', d.city),
+    row('Жильё', d.home),
+    row('Сетки «антикошка»', d.nets, 'nets'),
+    row('Все согласны на котёнка', d.agree, 'agree'),
+    row('Комментарий о жилье', d.homeNote, null, 1),
+    row('Кто живёт вместе', d.family, null, 1),
+    row('Дети', join(d.kids, d.kidsAge)),
+    row('Выгул', d.walk, 'walk'),
+    row('Животные сейчас', join(d.pets, d.petsInfo), null, 1),
+    row('Были ли раньше кошки', d.before, null, 1),
+    row('Чем будут кормить', d.food, null, 1),
+    row('Вакцинация, ветеринар, стерилизация', join(d.vet, d.vetNote), null, 1),
+    row('Поездки и переезд', d.travel, null, 1),
+    row('Свяжется, если не сможет содержать', d.promise, 'promise', 1),
+    row('Почему этот котёнок', d.why, null, 1),
+    row('О себе', d.about, null, 1)
+  ].join('');
+}
+
+function renderPlaceholder() {
+  $('#detail').innerHTML = `<div class="placeholder"><div><svg width="44" height="44"><use href="#cat"/></svg>Выберите анкету в списке<p class="kbd">↑ ↓ — листать анкеты · Esc — закрыть</p></div></div>`;
+}
+
+function renderDetail(id, keepScroll) {
+  const a = apps.find(x => x.id === id);
+  const el = $('#detail');
+  if (!a) { if (apps.length) { view.id = null; el.classList.remove('open'); if (isDesk()) renderPlaceholder(); } return; }
+  const d = a.data || {}, k = kitOf(a);
+  const phone = String(d.phone || '').replace(/[^\d+]/g, '');
+  const tg = String(d.tg || '').trim();
+  const tgUser = tg.startsWith('@') ? tg.slice(1) : '';
+  const scroll = el.scrollTop;
+  const ids = visibleIds(), pos = {i: ids.indexOf(id), total: ids.length};
+  el.innerHTML = `
+    <div class="d-top">
+      <button class="icon d-back" data-back aria-label="Назад"><svg width="18" height="18"><use href="#back"/></svg></button>
+      <span class="d-status">${STATUS[a.status] || ''}${pos.total > 1 ? ` · ${pos.i + 1} из ${pos.total}` : ''}</span>
+      <div class="d-nav">
+        <button class="icon" data-step="-1" aria-label="Предыдущая анкета" ${pos.i <= 0 ? 'disabled' : ''}><svg width="16" height="16" viewBox="0 0 18 18"><path d="M3 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="icon" data-step="1" aria-label="Следующая анкета" ${pos.i < 0 || pos.i >= pos.total - 1 ? 'disabled' : ''}><svg width="16" height="16" viewBox="0 0 18 18"><path d="M3 7l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    <div class="d-body">
+      <div class="d-head"><h2>${esc(d.name || 'Без имени')}${d.age ? `, ${esc(d.age)}` : ''}</h2><p>${esc(d.city || '')}${d.city ? ' · ' : ''}${when(a.created_at)}</p></div>
+      ${k ? `<button class="want" data-zoom="kitten-${k}.jpg"><img src="kitten-${k}.jpg" alt=""><div><span>Хочет котёнка</span><b>№ ${k} · ${sexWord(k)}</b><span>${KITTENS[k].color}</span></div></button>`
+          : `<div class="want"><div class="any${k === 0 ? ' mini' : ''}">${k === 0 ? collage() : '—'}</div><div><span>Хочет котёнка</span><b>${k === 0 ? 'Любого из пятерых' : 'Не указано'}</b></div></div>`}
+      <div class="contacts">
+        ${phone ? `<div class="contact"><div><span>Телефон</span><b>${esc(d.phone)}</b></div><div class="acts"><a class="btn btn-g" href="tel:${esc(phone)}">Позвонить</a><a class="btn btn-g" href="https://wa.me/${esc(phone.replace('+', ''))}" target="_blank" rel="noopener">WhatsApp</a></div></div>` : ''}
+        ${tg ? `<div class="contact"><div><span>Telegram</span><b>${esc(tg)}</b></div>${tgUser ? `<div class="acts"><a class="btn btn-w" href="https://t.me/${esc(tgUser)}" target="_blank" rel="noopener">Написать</a></div>` : ''}</div>` : ''}
+      </div>
+      <div class="label sec-t">Ответы</div>
+      <dl class="qa">${qa(d)}</dl>
+      <div class="label sec-t">Фото жилья</div>
+      ${a.photos && a.photos.length ? `<div class="photo" id="photo">Загружаем…</div>` : `<p style="color:var(--muted)">Фото не прикрепили</p>`}
+      <div class="label sec-t">Заметка для себя</div>
+      <textarea class="inp note" id="note" placeholder="Например: созвонились, приедет в субботу">${esc(a.note)}</textarea>
+      <div class="saved" id="saved"></div>
+      <div class="d-more">
+        ${a.status !== 'new' ? '<button class="btn btn-o" data-st="new">Сделать непросмотренной</button>' : ''}
+        <button class="btn btn-o" id="del">Удалить анкету</button>
+      </div>
+    </div>
+    <div class="d-actions">
+      <button class="btn ${a.status === 'fav' ? 'btn-w' : 'btn-g'}" data-st="${a.status === 'fav' ? 'seen' : 'fav'}">${a.status === 'fav' ? '★ Отобрана' : '☆ Отобрать'}</button>
+      <button class="btn ${a.status === 'spam' ? 'btn-w' : 'btn-g'}" data-st="${a.status === 'spam' ? 'seen' : 'spam'}">${a.status === 'spam' ? 'Не спам' : 'В спам'}</button>
+    </div>`;
+  el.scrollTop = keepScroll ? scroll : 0;
+  if (a.photos && a.photos.length) showPhoto(a.photos[0]);
+  let t;
+  $('#note').addEventListener('input', e => {
+    clearTimeout(t); $('#saved').textContent = '';
+    const v = e.target.value;
+    t = setTimeout(async () => {
+      a.note = v;
+      const {error} = await sb.from('applications').update({note: v}).eq('id', a.id);
+      const s = $('#saved'); if (s) s.textContent = error ? 'Не сохранилось' : 'Сохранено';
+    }, 700);
+  });
+  $('#del').onclick = () => removeApp(a);
+}
+
+async function showPhoto(path) {
+  if (!urlCache[path]) {
+    const {data, error} = await sb.storage.from(DB.bucket).createSignedUrl(path, 3600);
+    if (error) { const p = $('#photo'); if (p) p.textContent = 'Не удалось загрузить фото'; return; }
+    urlCache[path] = data.signedUrl;
+  }
+  const p = $('#photo'); if (!p) return;
+  p.innerHTML = `<img src="${urlCache[path]}" alt="Фото жилья">`;
+  p.dataset.zoom = urlCache[path];
+}
+
+async function removeApp(a) {
+  if (!confirm(`Удалить анкету «${(a.data && a.data.name) || 'без имени'}» навсегда?`)) return;
+  if (a.photos && a.photos.length) await sb.storage.from(DB.bucket).remove(a.photos);
+  const {error} = await sb.from('applications').delete().eq('id', a.id);
+  if (error) { toast('Не удалось удалить'); console.error(error); return; }
+  apps = apps.filter(x => x.id !== a.id);
+  back();
+  renderAll();
+  toast('Анкета удалена');
+}
+
+/* ===== события ===== */
+document.addEventListener('click', e => {
+  const z = e.target.closest('[data-zoom]');
+  if (z && !e.target.closest('[data-back]')) { $('#lb img').src = z.dataset.zoom; $('#lb').classList.add('show'); return; }
+  if (e.target.closest('[data-back]')) return back();
+  const sp = e.target.closest('[data-step]'); if (sp) return step(+sp.dataset.step);
+  const kc = e.target.closest('[data-k]'); if (kc) return go(kc.dataset.k);
+  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; renderTabs(); renderList(); return; }
+  const it = e.target.closest('[data-id]'); if (it) return go(curK(), it.dataset.id);
+  const st = e.target.closest('[data-st]');
+  if (st && view.id) {
+    const s = st.dataset.st;
+    patch(view.id, {status: s});
+    toast({fav: 'Анкета отобрана ★', spam: 'Отправлена в спам', new: 'Отмечена непросмотренной', seen: 'Готово'}[s]);
+  }
+});
+$('#lb').onclick = () => $('#lb').classList.remove('show');
+$('#search').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderList(); });
+addEventListener('keydown', e => {
+  if ($('#app').hidden) return;
+  if (e.key === 'Escape') {
+    if ($('#lb').classList.contains('show')) return $('#lb').classList.remove('show');
+    if (view.id || view.k !== null) back();
+    return;
+  }
+  // ↑ ↓ — листать анкеты на компьютере
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && isDesk() && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
+    e.preventDefault();
+    step(e.key === 'ArrowDown' ? 1 : -1);
+  }
+});
+
+// соседние анкеты в текущем списке (котёнок + вкладка + поиск)
+const visibleIds = () => ofKit(curK()).filter(a => inTab(a) && inSearch(a)).map(a => a.id);
+function step(dir) {
+  const ids = visibleIds(); if (!ids.length) return;
+  const i = ids.indexOf(view.id);
+  const next = ids[Math.max(0, Math.min(ids.length - 1, i < 0 ? 0 : i + dir))];
+  if (next === view.id) return;
+  view = {k: curK(), id: next};
+  history.replaceState(view, '');
+  apply(false);
+  const el = document.querySelector(`.item[data-id="${next}"]`); if (el) el.scrollIntoView({block: 'nearest'});
+}
+let wasDesk = isDesk();
+addEventListener('resize', () => { if (isDesk() !== wasDesk) { wasDesk = isDesk(); if (!$('#app').hidden) apply(true); } });
+
+/* ===== старт ===== */
+(async () => {
+  history.replaceState(view, '');
+  if (!DB.url || !DB.key || !window.supabase) return showLogin('Заполните config.js — без него вход не работает');
+  sb = supabase.createClient(DB.url, DB.key);
+  const {data: {session}} = await sb.auth.getSession();
+  session ? showApp() : showLogin();
+})();
+</script>
+</body>
+</html>
